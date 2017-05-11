@@ -10,11 +10,11 @@ struct timex txc;
 struct rtc_time tm;
 
 /* For each probe you need to allocate a kprobe structure */
-static struct kprobe test_args_kp = {
-	.symbol_name	= "test_args",
+static struct kprobe _do_fork_kp = {
+	.symbol_name	= "_do_fork",
 };
 
-/***** test_args ************************************************************************************/
+/***** _do_fork ************************************************************************************/
 static int pre_handler_emerg(struct kprobe *p, struct pt_regs *regs)
 {
 //	if(!strcmp(current->comm , "firefox"))
@@ -119,13 +119,13 @@ static int pre_handler_notice(struct kprobe *p, struct pt_regs *regs)
 
 static void post_handler(struct kprobe *p, struct pt_regs *regs, unsigned long flags)
 {
-//	printk("    Hello, this is the post_handler() of test_args_kp.\n");
+//	printk("    Hello, this is the post_handler() of _do_fork_kp.\n");
 //	printk("-----------------------------------------------------------\n");
 }
 
 static int fault_handler(struct kprobe *p, struct pt_regs *regs, int trapnr)
 {
-	printk("    Attention, the fault_handler() of test_args_kp is called.");	
+	printk("    Attention, the fault_handler() of _do_fork_kp is called.");	
 	printk(KERN_INFO "      fault_handler: p->addr = 0x%p, trap #%dn", p->addr, trapnr);
 	/* Return 0 because we don't handle the fault. */
 	return 0;
@@ -137,20 +137,20 @@ static int fault_handler(struct kprobe *p, struct pt_regs *regs, int trapnr)
 
 static int __init kprobe_init(void)
 {
-	int test_args_ret = 0;
+	int _do_fork_ret = 0;
 
-	test_args_kp.pre_handler = pre_handler_emerg;
-	test_args_kp.post_handler = post_handler;
-	test_args_kp.fault_handler = fault_handler;
+	_do_fork_kp.pre_handler = pre_handler_emerg;
+	_do_fork_kp.post_handler = post_handler;
+	_do_fork_kp.fault_handler = fault_handler;
 
-	test_args_ret = register_kprobe(&test_args_kp);
-	if (test_args_ret < 0)
+	_do_fork_ret = register_kprobe(&_do_fork_kp);
+	if (_do_fork_ret < 0)
 	{
-		printk(KERN_INFO "register_kprobe of test_args_kp failed, returned %d\n", test_args_ret);
+		printk(KERN_INFO "register_kprobe of _do_fork_kp failed, returned %d\n", _do_fork_ret);
 	}
 	else
 	{
-		printk(KERN_INFO "Planted test_args_kp at %p\n", test_args_kp.addr);
+		printk(KERN_INFO "Planted _do_fork_kp at %p\n", _do_fork_kp.addr);
 	}
 
 	return 0;
@@ -158,8 +158,8 @@ static int __init kprobe_init(void)
 
 static void __exit kprobe_exit(void)
 {
-	unregister_kprobe(&test_args_kp);
-	printk(KERN_INFO "test_args_kp at %p unregistered\n", test_args_kp.addr);
+	unregister_kprobe(&_do_fork_kp);
+	printk(KERN_INFO "_do_fork_kp at %p unregistered\n", _do_fork_kp.addr);
 }
 
 module_init(kprobe_init)
