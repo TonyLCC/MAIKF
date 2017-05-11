@@ -17,7 +17,7 @@ static struct kprobe _do_fork_kp = {
 /***** _do_fork ************************************************************************************/
 static int pre_handler_emerg(struct kprobe *p, struct pt_regs *regs)
 {
-//	if(!strcmp(current->comm , "firefox"))
+	if(!strcmp(current->comm , "firefox"))
 	{
 		do_gettimeofday(&(txc.time));
 		rtc_time_to_tm(txc.time.tv_sec,&tm); 
