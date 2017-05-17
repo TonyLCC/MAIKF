@@ -13,8 +13,10 @@ all:
 
 install:
 	insmod $(TARGET)
-  
-clean:
+
+remove:
 	rmmod $(TARGET)
+
+clean:
 	make -C $(KDIR) M=$(PWD) clean
 	
