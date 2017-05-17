@@ -22,27 +22,30 @@ static int pre_handler_emerg(struct kprobe *p, struct pt_regs *regs)
 		do_gettimeofday(&(txc.time));
 		rtc_time_to_tm(txc.time.tv_sec,&tm); 
 
-		printk("*************************************************************\n");
-		printk(KERN_EMERG "[Emergency] A high-risk function is called!!!\n");
-		printk(KERN_EMERG "[Emergency] Function name: %s\n", p->symbol_name);
-		printk(KERN_EMERG "[Emergency] Process information: pid: %6d |comm: %8s\n", current->pid, current->comm);
-		printk(KERN_EMERG "[Emergency] Register information: rdi: %08lx  rsi: %08lx  rdx: %08lx  rcx: %08lx  r8: %08lx  r9: %08lx\n", regs->di, regs->si, regs->dx, regs->cx, regs->r8, regs->r9);
-		printk(KERN_EMERG "[Emergency] Timestamp: %ld.%ld\n", txc.time.tv_sec, txc.time.tv_usec);
-		printk(KERN_EMERG "[Emergency] Beijing time: %d-%02d-%02d %02d:%02d:%02d \n", tm.tm_year+1900, tm.tm_mon+1, tm.tm_mday, tm.tm_hour+8, tm.tm_min, tm.tm_sec);
+//		printk("*************************************************************\n");
+/*		printk(KERN_EMERG "[Emergency] A high-risk function is called : ");
+		printk("Function name: %s", p->symbol_name);
+		printk(", Process information: pid: %6d |comm: %8s", current->pid, current->comm);
+		printk(", Register information: rdi: %08lx  rsi: %08lx  rdx: %08lx  rcx: %08lx  r8: %08lx  r9: %08lx", regs->di, regs->si, regs->dx, regs->cx, regs->r8, regs->r9);
+		printk(", Timestamp: %ld.%ld", txc.time.tv_sec, txc.time.tv_usec);
+		printk(", Beijing time: %d-%02d-%02d %02d:%02d:%02d\n", tm.tm_year+1900, tm.tm_mon+1, tm.tm_mday, tm.tm_hour+8, tm.tm_min, tm.tm_sec);
+*/
+
+		printk(KERN_EMERG "[Emergency] {\"funcName\":\"%s\",\"processInfo\":{\"pid\":%d,\"comm\":\"%s\"},\"registerInfo\":{\"rdi\":\"%lx\",\"rsi\":\"%lx\",\"rdx\":\"%lx\",\"rcx\":\"%lx\",\"r8\":\"%lx\",\"r9\":\"%lx\"},\"timestamp\":\"%ld.%ld\",\"BeijingTime\":\"%d-%02d-%02d %02d:%02d:%02d\"}\n", p->symbol_name, current->pid, current->comm, regs->di, regs->si, regs->dx, regs->cx, regs->r8, regs->r9, txc.time.tv_sec, txc.time.tv_usec, tm.tm_year+1900, tm.tm_mon+1, tm.tm_mday, tm.tm_hour+8, tm.tm_min, tm.tm_sec);
 
 		/* send signal SIGTERM to kill */
-		if(current->pid > 0)
-		{
+//		if(current->pid > 0)
+//		{
 //			force_sig(SIGKILL, current);
-			printk("[Emergency] This process has be killed!\n");
-		}
+//			printk("[Emergency] This process has be killed!\n");
+//		}
 
-		printk("*************************************************************\n");
+//		printk("*************************************************************\n");
 	}
 
 	return 0;
 }
-
+/*
 static int pre_handler_warning(struct kprobe *p, struct pt_regs *regs)
 {
 //	Emergency Critical Warning Notification Information 
@@ -76,7 +79,6 @@ static int pre_handler_warning(struct kprobe *p, struct pt_regs *regs)
 		printk(KERN_WARNING "[Warning] Timestamp: %ld.%ld\n", txc.time.tv_sec, txc.time.tv_usec);
 		printk(KERN_WARNING "[Warning] Beijing time: %d-%02d-%02d %02d:%02d:%02d \n", tm.tm_year+1900, tm.tm_mon+1, tm.tm_mday, tm.tm_hour+8, tm.tm_min, tm.tm_sec);
 
-		/* send signal SIGTERM to kill */
 		if(current->pid > 0)
 		{
 //			force_sig(SIGKILL, current);
@@ -104,7 +106,6 @@ static int pre_handler_notice(struct kprobe *p, struct pt_regs *regs)
 		printk(KERN_NOTICE "[Notification] Timestamp: %ld.%ld\n", txc.time.tv_sec, txc.time.tv_usec);
 		printk(KERN_NOTICE "[Notification] Beijing time: %d-%02d-%02d %02d:%02d:%02d \n", tm.tm_year+1900, tm.tm_mon+1, tm.tm_mday, tm.tm_hour+8, tm.tm_min, tm.tm_sec);
 
-		/* send signal SIGTERM to kill */
 		if(current->pid > 0)
 		{
 //			force_sig(SIGKILL, current);
@@ -116,7 +117,7 @@ static int pre_handler_notice(struct kprobe *p, struct pt_regs *regs)
 
 	return 0;
 }
-
+*/
 static void post_handler(struct kprobe *p, struct pt_regs *regs, unsigned long flags)
 {
 //	printk("    Hello, this is the post_handler() of _do_fork_kp.\n");
